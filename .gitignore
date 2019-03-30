@@ -1,0 +1,13 @@
+
+# Videos
+assets/videos/eyes-on-you/*.mp4
+assets/videos/family-feud/*.mp4
+assets/videos/living-nightmare/*.mp4
+assets/videos/transitions/*.mp4
+assets/videos/withering-heights/*.mp4
+
+# Mac Files
+.DS_Store
+
+# Node Modules
+node_modules

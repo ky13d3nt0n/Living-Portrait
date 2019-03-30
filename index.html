@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Living Portrait</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body id="body">
+
+    <div id="video-controls" class="video-inputs">
+      <!-- Video Type -->
+      <select id="video-type" class="" name="video-type">
+        <option value="living-nightmare">Living Nightmare</option>
+        <option value="eyes-on-you">Eyes On You</option>
+        <!-- <option value="family-feud">Family Feud</option> -->
+        <option value="withering-heights">Withering Heights</option>
+      </select>
+
+      <!-- Character -->
+      <select id="video-character" class="" name="video-character">
+        <option value="Gentleman">Gentleman</option>
+        <option value="Girl">Girl</option>
+        <option value="Lady">Lady</option>
+      </select>
+
+      <!-- Mute / Unmuted -->
+      <select id="video-muted" class="" name="video-mute">
+        <option value="true">Muted</option>
+        <option value="false">Unmuted</option>
+      </select>
+
+      <button onclick="startApp()" type="button" name="button">Start</button>
+      <button onclick="stopApp()" type="button" name="button">Stop</button>
+
+      <button onclick="motionStart()" type="button" name="button">Motion Start</button>
+    </div>
+
+    <video id="myVideo">
+      <source src="videos/living-nightmare/Gentleman.mp4" type="video/mp4" poster="living-portrait-poster.png">
+      Your browser does not support HTML5 video.
+    </video>
+  </body>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+  <script>
+
+  /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  *
+  * Socket
+  *
+  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+  // Connect to Socket
+  var socket = io('http://boreas.local:8081');
+
+  // Connected
+  socket.on('connect', function(data) {
+    console.log('Socket Connected')
+  });
+
+  // Motion Calibrated
+  socket.on('motionCalibrated', function(data) {
+    console.log('Motion Calibrated');
+  });
+
+  // Motion Start
+  socket.on('motionStart', function(data) {
+    console.log('Motion Detected');
+    motionStart();
+  });
+
+  /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  *
+  * Set Video
+  *
+  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+  // Body
+  var body = document.body;
+
+  // Start the Application
+  function startApp() {
+    // Body - Add class to remove cursor
+    body.classList.add('app-initialized');
+
+    // Inputs
+    var controls = document.getElementById('video-controls');
+    controls.classList.add('collapsed');
+
+    // Video Element
+    var myVideo = document.getElementById('myVideo');
+
+    // Type
+    var type = document.getElementById('video-type').value;
+
+    // Character
+    var character = document.getElementById('video-character').value;
+
+    // Create the path to the video
+    var path = 'videos/';
+    path += (type + '/' + character + '.mp4');
+
+    // Muted / Unmuted
+    var sound = document.getElementById('video-muted').value;
+    if(sound === 'true') {
+      sound = true;
+    } else {
+      sound = false;
+    }
+    myVideo.muted = sound;
+
+    // Set the src for the video and load it.
+    myVideo.src = path;
+    myVideo.load();
+    resetVideo();
+  }
+
+  // Stop the Application
+  function stopApp() {
+    // Body - Remove class to stop video
+    body.classList.remove('app-initialized');
+    resetVideo();
+  }
+
+  // Bring back controls if body is clicked
+  myVideo.addEventListener('click', function() {
+    // Controls
+    var controls = document.getElementById('video-controls');
+
+    // Stop App and Bring Back Controls
+    if(body.classList.contains('app-initialized') && controls.classList.contains('collapsed')) {
+      console.log('Stopping App');
+      controls.classList.remove('collapsed');
+      stopApp();
+    }
+  });
+
+
+  /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  *
+  * Video
+  *
+  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+  // Reset Video
+  function resetVideo() {
+
+    // Pause from looping
+    myVideo.pause();
+
+    // Set current time
+    myVideo.currentTime = 0.50;
+
+    // Set playback rate
+    myVideo.playbackRate = 1.2;
+  }
+
+
+  // Motion Start - Play Video
+  function motionStart() {
+    // Only play video if not already playing and app has been initialized.
+    if(!myVideo.playing && body.classList.contains('app-initialized')) {
+      myVideo.play();
+    }
+  }
+
+
+  // Stop video and restart the process
+  myVideo.ontimeupdate = function() {
+    if(myVideo.currentTime >= 11) {
+      resetVideo();
+    }
+  };
+  </script>
+</html>
