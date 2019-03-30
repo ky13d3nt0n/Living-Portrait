@@ -4,6 +4,6 @@
 
 ### This project has been ported over from Python to NodeJS.
 
-#### Video not included. To buy them visit [AtmosFX](https://atmosfx.com/collections/halloween/products/unliving-portraits)
+#### Videos not included. To buy them visit [AtmosFX](https://atmosfx.com/collections/halloween/products/unliving-portraits)
 
 ![Living Portrait](https://github.com/kyl3d3nt0n/Living-Portrait/blob/master/assets/img/poster.jpg)
